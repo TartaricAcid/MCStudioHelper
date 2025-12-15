@@ -2,6 +2,7 @@ package com.github.tartaricacid.nemc.gui
 
 import com.github.tartaricacid.nemc.options.GameMode
 import com.github.tartaricacid.nemc.options.LevelType
+import com.github.tartaricacid.nemc.options.LogLevel
 import com.github.tartaricacid.nemc.run.MCRunConfiguration
 import com.github.tartaricacid.nemc.util.FileUtils
 import com.github.tartaricacid.nemc.util.PathUtils
@@ -41,6 +42,7 @@ class MCSettingsEditor : SettingsEditor<MCRunConfiguration>() {
 
     private lateinit var gameExeField: TextFieldWithHistoryWithBrowseButton
 
+    private lateinit var logLevel: ComboBox<LogLevel>
     private lateinit var includedModDirs: JBList<String>
 
     private lateinit var worldFolder: ExtendableTextField
@@ -68,6 +70,13 @@ class MCSettingsEditor : SettingsEditor<MCRunConfiguration>() {
                     null, fileChooser, FileUtils.Companion::findMinecraftExecutables
                 )
                 cell(gameExeField).comment("开发者游戏启动器所在路径").align(Align.Companion.FILL)
+            }
+
+            row("日志等级：") {
+                logLevel = comboBox(
+                    EnumComboBoxModel(LogLevel::class.java),
+                    textListCellRenderer { it?.displayName }
+                ).comment("控制 PyCharm 输出日志的详细程度").component
             }
 
             row("同时运行组件：") {
@@ -185,6 +194,8 @@ class MCSettingsEditor : SettingsEditor<MCRunConfiguration>() {
             gameExeField.text = config.options.gameExecutablePath
         }
 
+        logLevel.selectedItem = config.options.logLevel
+
         var includedModDirsData = includedModDirs.model
         if (includedModDirsData is DefaultListModel<String>) {
             includedModDirsData.clear()
@@ -219,6 +230,8 @@ class MCSettingsEditor : SettingsEditor<MCRunConfiguration>() {
             throw ConfigurationException("启动程序路径不能为空", "配置错误")
         }
         config.options.gameExecutablePath = gameExeField.text
+
+        config.options.logLevel = logLevel.selectedItem as LogLevel
 
         config.options.includedModDirs.clear()
         for (i in 0 until includedModDirs.model.size) {

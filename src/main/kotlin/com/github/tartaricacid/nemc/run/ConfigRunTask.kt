@@ -21,6 +21,8 @@ import java.util.*
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 
+const val TEST_MOD_DIR_NAME = "183b0dc7-ae4a-48fb-800d-9d68f7162e7e"
+
 @Suppress("DialogTitleCapitalization")
 class ConfigRunTask {
     companion object {
@@ -62,6 +64,15 @@ class ConfigRunTask {
                 for (pack in packList) {
                     FileUtils.createSymlink(pack.path, targetDir.resolve(pack.uuid))
                 }
+            }
+
+            // 解压（强制覆盖）测试模组
+            val behPackDir = PathUtils.behaviorPacksDir()
+            if (behPackDir != null) {
+                val testModSource = "data/include_test_mod"
+                val testModTarget = behPackDir.resolve(TEST_MOD_DIR_NAME)
+                FileUtils.extractResourceDir(testModSource, testModTarget)
+                PackUtils.parsePack(testModTarget, packMaps)
             }
 
             // 读取或新建存档
