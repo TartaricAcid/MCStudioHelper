@@ -187,10 +187,39 @@ class ConfigRunTask {
                 gson.toJson(launchConfig, writer)
             }
 
+            // 调试模组的按键绑定
+            // TODO：以后运行用户可以自定义按键
+            val debugOptions = Gson().toJson(
+                mapOf(
+                    // 键码查阅：https://mc.163.com/dev/mcmanual/mc-dev/mcdocs/1-ModAPI-beta/%E6%9E%9A%E4%B8%BE%E5%80%BC/KeyBoardType.html
+                    // 绑定热更新快捷键
+                    "reload_key" to 82,
+                    // 绑定重载世界快捷键
+                    "reload_world_key" to "",
+                    // 绑定重载 Addon 快捷键
+                    "reload_addon_key" to "",
+                    // 绑定重载着色器快捷键
+                    "reload_shaders_key" to "",
+                    // 是否在全体 UI 界面都触发热更新快捷键（默认 false 仅 HUD 界面）
+                    "reload_key_global" to false
+                )
+            )
+
+            // 热重载会重载的模组目录
+            // 目前仅包含当前项目
+            val projectLinuxStylePath = Paths.get(projectPath).toAbsolutePath().toString().replace('\\', '/')
+            val targetModDirs = Gson().toJson(listOf(projectLinuxStylePath))
+
+            val pluginEnv = mutableMapOf(
+                "NEMC_DEBUG_OPTIONS" to debugOptions,
+                "NEMC_TARGET_MOD_DIRS" to targetModDirs
+            )
+
             // 返回命令行对象
             return GeneralCommandLine()
                 .withExePath(gamePath.absolutePathString())
                 .withParameters("config=${launchConfigPath.absolutePathString()}")
+                .withEnvironment(pluginEnv)
         }
     }
 }

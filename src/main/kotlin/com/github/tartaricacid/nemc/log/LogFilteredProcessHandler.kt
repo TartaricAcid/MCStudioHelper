@@ -208,7 +208,7 @@ class LogFilteredProcessHandler(commandLine: GeneralCommandLine, val options: MC
     fun handleVerboseLog(line: String): String? {
         val sysLogMatch = SYS_LOG.find(line)
         if (sysLogMatch != null) {
-            val level = sysLogMatch.groupValues[1]
+            val level = sysLogMatch.groupValues[2]
             val coloredLevel = getColoredLog(level)
             return "$coloredLevel$line$RESET"
         }
@@ -224,7 +224,12 @@ class LogFilteredProcessHandler(commandLine: GeneralCommandLine, val options: MC
             return "$coloredLevel$line$RESET"
         }
 
-        return line
+        var coloredLevel = getColoredLog(line)
+        // 开头会刷 NO LOG FILE，着暗灰色
+        if (line.startsWith("NO LOG FILE!")) {
+            coloredLevel = DARK_GRAY
+        }
+        return "$coloredLevel$line$RESET"
     }
 
     fun getColoredLog(line: String): String {
