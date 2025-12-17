@@ -1,6 +1,7 @@
 package com.github.tartaricacid.mcshelper.util
 
 import com.google.gson.JsonParser
+import com.intellij.openapi.project.Project
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -22,6 +23,25 @@ class PackUtils {
                     }
                 }
             }
+        }
+
+        fun findFirstBehaviorPack(project: Project): PackInfo? {
+            val basePath = project.basePath ?: return null
+            val path = Path.of(basePath)
+            Files.walk(path, 2).use { stream ->
+                val it = stream.filter { Files.isDirectory(it) }.iterator()
+                while (it.hasNext()) {
+                    val dir = it.next()
+                    val manifestPath = dir.resolve("manifest.json")
+                    if (Files.isRegularFile(manifestPath)) {
+                        val packInfo = parseManifest(manifestPath)
+                        if (packInfo != null && packInfo.type == PackType.BEHAVIOR) {
+                            return packInfo
+                        }
+                    }
+                }
+            }
+            return null
         }
 
         fun parseManifest(manifestPath: Path): PackInfo? {

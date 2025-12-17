@@ -12,7 +12,10 @@ import com.google.common.collect.Maps
 import com.google.gson.Gson
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.vfs.VirtualFileManager
 import org.cloudburstmc.nbt.NbtMap
 import org.cloudburstmc.nbt.NbtMapBuilder
 import java.nio.file.Files
@@ -214,6 +217,28 @@ class ConfigRunTask {
                 "MCS_HELPER_DEBUG_OPTIONS" to debugOptions,
                 "MCS_HELPER_TARGET_MOD_DIRS" to targetModDirs
             )
+
+            // 是否画蛇添足？
+            // 自动识别并绑定当前源码目录
+            val behaviorPath = PackUtils.findFirstBehaviorPack(project)
+            if (behaviorPath != null) {
+                val sourceDir = VirtualFileManager.getInstance().findFileByUrl("file://${behaviorPath.path}")
+                if (sourceDir != null && sourceDir.exists()) {
+                    ModuleManager.getInstance(project).modules.forEach { module ->
+                        ModuleRootModificationUtil.updateModel(module) { model ->
+                            val existingSourceRoots = model.contentEntries
+                                .flatMap { it.sourceFolders.toList() }
+                                .map { it.file }
+
+                            if (sourceDir !in existingSourceRoots) {
+                                val contentEntry = model.contentEntries.firstOrNull()
+                                    ?: model.addContentEntry(sourceDir)
+                                contentEntry.addSourceFolder(sourceDir, false)
+                            }
+                        }
+                    }
+                }
+            }
 
             // 返回命令行对象
             return GeneralCommandLine()
