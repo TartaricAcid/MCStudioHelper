@@ -10,6 +10,8 @@ plugins {
 group = "com.github.tartaricacid.mcshelper"
 version = "1.0.0"
 
+fun environment(key: String) = providers.environmentVariable(key)
+
 repositories {
     mavenCentral()
     intellijPlatform {
@@ -23,6 +25,9 @@ dependencies {
         bundledPlugin("PythonCore")
 
         plugin("com.redhat.devtools.lsp4ij:0.19.0")
+
+        pluginVerifier()
+        zipSigner()
     }
 }
 
@@ -31,6 +36,12 @@ intellijPlatform {
         ideaVersion {
             sinceBuild = "251"
         }
+    }
+
+    signing {
+        certificateChain = environment("CERTIFICATE_CHAIN")
+        privateKey = environment("PRIVATE_KEY")
+        password = environment("PRIVATE_KEY_PASSWORD")
     }
 }
 
