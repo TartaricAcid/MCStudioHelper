@@ -230,7 +230,14 @@ class LogFilteredProcessHandler(commandLine: GeneralCommandLine, val options: MC
     /**
      * 普通情况下，仅显示 Python 输出的日志内容
      */
-    fun handleNormalLog(line: String): String? {
+    fun handleNormalLog(lineInput: String): String? {
+        var line = lineInput
+
+        // 由于 [ERROR][Engine] 往往先于 [Python] 头的添加，故检查到含有 [ERROR][Engine] 时，需要手动添加
+        if (lineInput.contains("[ERROR][Engine]") && !lineInput.startsWith(PYTHON_HEADER)) {
+            line = "$PYTHON_HEADER $lineInput"
+        }
+
         val matchResult = GAME_LOG.find(line)
         if (matchResult == null) {
             // 如果是普通的 [Python] 开头的日志，剔除头部后返回
@@ -248,8 +255,9 @@ class LogFilteredProcessHandler(commandLine: GeneralCommandLine, val options: MC
         val tokens = bracketRe.findAll(rest).map { it.groupValues[1] }.toList()
 
         val module = tokens.getOrNull(1) ?: ""
+        val level = tokens.getOrNull(0) ?: ""
         // 剔除引擎噪声
-        if (module == "Engine") {
+        if (module == "Engine" && level == "INFO") {
             return null
         }
 
@@ -260,10 +268,9 @@ class LogFilteredProcessHandler(commandLine: GeneralCommandLine, val options: MC
             return null
         }
 
-        val level = tokens.getOrNull(0) ?: ""
         var coloredLevel = getColoredLog(level)
         // 如果是 Developer 那么，打印成灰色
-        if (module == "Developer") {
+        if (module == "Developer" && level == "INFO") {
             coloredLevel = DARK_GRAY
         }
         val trimLine = line.substring(PYTHON_HEADER.length, line.length).trim()

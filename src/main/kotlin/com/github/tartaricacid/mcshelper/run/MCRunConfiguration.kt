@@ -36,6 +36,7 @@ class MCRunConfiguration(project: Project, factory: ConfigurationFactory?, name:
             override fun createConsole(executor: Executor): ConsoleView? {
                 val consoleView = super.createConsole(executor)
                 consoleView?.addMessageFilter(PythonErrorFilter(project))
+                consoleView?.addMessageFilter(JsonErrorFilter(project))
                 return consoleView
             }
         }

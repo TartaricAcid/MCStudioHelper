@@ -1,6 +1,10 @@
 package com.github.tartaricacid.mcshelper.util
 
 import com.intellij.execution.ExecutionException
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.FilenameIndex
+import com.intellij.psi.search.GlobalSearchScope
 import java.io.File
 import java.net.URI
 import java.net.URL
@@ -10,6 +14,16 @@ import javax.swing.filechooser.FileSystemView
 
 class FileUtils {
     companion object {
+        fun findFile(project: Project, relativePath: String): VirtualFile? {
+            val fileName = relativePath.substringAfterLast('/')
+            val scope = GlobalSearchScope.projectScope(project)
+            val files = FilenameIndex.getVirtualFilesByName(fileName, scope)
+
+            return files.firstOrNull { file ->
+                file.path.replace('\\', '/').endsWith(relativePath)
+            } ?: files.firstOrNull()
+        }
+
         /**
          * 寻找开发启动器的可执行文件路径
          */
