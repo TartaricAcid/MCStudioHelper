@@ -39,9 +39,9 @@ intellijPlatform {
     }
 
     signing {
-        certificateChain = environment("CERTIFICATE_CHAIN")
-        privateKey = environment("PRIVATE_KEY")
-        password = environment("PRIVATE_KEY_PASSWORD")
+        certificateChain = environment("JB_CERTIFICATE_CHAIN")
+        privateKey = environment("JB_PRIVATE_KEY")
+        password = environment("JB_PRIVATE_KEY_PASSWORD")
     }
 }
 

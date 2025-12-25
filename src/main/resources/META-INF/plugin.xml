@@ -33,6 +33,15 @@
       <p>源码：<a href="https://github.com/TartaricAcid/MCStudioHelper">https://github.com/TartaricAcid/MCStudioHelper</a><br/>本插件遵循 MIT 开源协议发布，详见 LICENSE 文件。<br/>Source: <a href="https://github.com/TartaricAcid/MCStudioHelper">GitHub repository</a><br/>License: MIT (see LICENSE file).</p>
     </div>
     ]]></description>
+    <change-notes><![CDATA[
+    <h3>1.0.1</h3>
+    <ul>
+      <li>Now can properly display [ERROR][Engine] type errors</li>
+      <li>Support quick navigation for JSON errors in [ERROR][Engine]</li>
+      <li>现在能正常显示 [ERROR][Engine] 类型的报错了</li>
+      <li>[ERROR][Engine] 里的 JSON 错误，支持快捷跳转了</li>
+    </ul>
+    ]]></change-notes>
     <depends>com.intellij.modules.python</depends>
     <depends>com.redhat.devtools.lsp4ij</depends>
     <extensions defaultExtensionNs="com.intellij">
