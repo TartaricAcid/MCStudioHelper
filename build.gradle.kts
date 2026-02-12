@@ -38,10 +38,16 @@ intellijPlatform {
         }
     }
 
+    buildSearchableOptions = false
+
     signing {
         certificateChain = environment("JB_CERTIFICATE_CHAIN")
         privateKey = environment("JB_PRIVATE_KEY")
         password = environment("JB_PRIVATE_KEY_PASSWORD")
+    }
+
+    publishing {
+        token = environment("JB_PUBLISH_TOKEN")
     }
 }
 
