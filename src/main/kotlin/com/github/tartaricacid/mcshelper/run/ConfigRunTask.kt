@@ -38,16 +38,20 @@ class ConfigRunTask {
 
             // 先把当前项目加入
             val packMaps: EnumMap<PackType, MutableList<PackInfo>> = Maps.newEnumMap(PackType::class.java)
-            val projectPath = project.basePath
-            if (projectPath == null) {
-                throw ExecutionException("当前项目路径为空")
+            val projectPath = project.basePath ?: throw ExecutionException("当前项目路径为空")
+            val projectIsFound = PackUtils.parsePack(Paths.get(projectPath), packMaps)
+            if (!projectIsFound) {
+                throw ExecutionException("当前项目不包含有效的资源包或行为包")
             }
-            PackUtils.parsePack(Paths.get(projectPath), packMaps)
 
             // 再把额外添加的包加入
             for (extraPackPath in config.includedModDirs) {
                 val extraPath = Paths.get(extraPackPath)
-                PackUtils.parsePack(extraPath, packMaps)
+                val found = PackUtils.parsePack(extraPath, packMaps)
+                // 额外的包导入失败，弹出提示
+                if (!found) {
+                    throw ExecutionException("目录 \"$extraPackPath\" 不包含有效的资源包或行为包")
+                }
             }
 
             // 创建符号链接

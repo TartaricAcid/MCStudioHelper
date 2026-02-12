@@ -8,7 +8,14 @@ import java.util.*
 
 class PackUtils {
     companion object {
-        fun parsePack(path: Path, packMap: EnumMap<PackType, MutableList<PackInfo>>) {
+        /**
+         * 解析指定路径下的资源包和行为包，找到 manifest.json 文件并提取相关信息，存储在 packMap 中
+         *
+         * 如果找到至少一个有效的包，返回 true；否则返回 false
+         */
+        fun parsePack(path: Path, packMap: EnumMap<PackType, MutableList<PackInfo>>): Boolean {
+            var foundPack = false
+
             // 遍历当前目录下的子目录，检查是否存在 manifest.json 文件
             Files.walk(path, 2).use { stream ->
                 stream.filter { Files.isDirectory(it) }.forEach { dir ->
@@ -18,10 +25,13 @@ class PackUtils {
                         if (packInfo != null) {
                             val list = packMap.getOrPut(packInfo.type) { mutableListOf() }
                             list.add(packInfo)
+                            foundPack = true
                         }
                     }
                 }
             }
+
+            return foundPack
         }
 
         fun parseManifest(manifestPath: Path): PackInfo? {
