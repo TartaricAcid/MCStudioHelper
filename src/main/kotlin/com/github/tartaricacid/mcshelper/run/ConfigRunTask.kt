@@ -1,12 +1,9 @@
 package com.github.tartaricacid.mcshelper.run
 
 import com.github.tartaricacid.mcshelper.options.MCRunConfigurationOptions
-import com.github.tartaricacid.mcshelper.util.FileUtils
-import com.github.tartaricacid.mcshelper.util.LevelDataUtils
-import com.github.tartaricacid.mcshelper.util.PackUtils
+import com.github.tartaricacid.mcshelper.util.*
 import com.github.tartaricacid.mcshelper.util.PackUtils.PackInfo
 import com.github.tartaricacid.mcshelper.util.PackUtils.PackType
-import com.github.tartaricacid.mcshelper.util.PathUtils
 import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import com.google.gson.Gson
@@ -226,11 +223,19 @@ class ConfigRunTask {
                 "MCS_HELPER_TARGET_MOD_DIRS" to targetModDirs
             )
 
-            // 返回命令行对象
-            return GeneralCommandLine()
+            val commandLine = GeneralCommandLine()
                 .withExePath(gamePath.absolutePathString())
                 .withParameters("config=${launchConfigPath.absolutePathString()}")
                 .withEnvironment(pluginEnv)
+
+            val isSupportedVersion = VersionUtils.canSupportBreakpointDebug(gamePath.absolutePathString())
+            if (isSupportedVersion) {
+                commandLine.withParameters(
+                    "debug_ip=127.0.0.1",
+                    "debug_port=5678"
+                )
+            }
+            return commandLine
         }
     }
 }

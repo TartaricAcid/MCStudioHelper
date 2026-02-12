@@ -4,7 +4,7 @@ plugins {
     id("java")
     id("idea")
     id("org.jetbrains.kotlin.jvm") version "2.2.21"
-    id("org.jetbrains.intellij.platform") version "2.10.5"
+    id("org.jetbrains.intellij.platform") version "2.11.0"
 }
 
 group = "com.github.tartaricacid.mcshelper"
