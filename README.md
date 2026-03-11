@@ -10,7 +10,7 @@
 
 <p style="color: gray">注意：本插件与网易官方无任何从属关系，仅供个人学习与开发使用。</p>
 
-[插件使用教程](./MC%20Studio%20Helper%20插件食用指北.pdf)
+[插件使用教程](https://github.com/TartaricAcid/MCStudioHelper/blob/main/%E6%8F%92%E4%BB%B6%E6%95%99%E7%A8%8B/MC%20Studio%20Helper%20%E6%8F%92%E4%BB%B6%E9%A3%9F%E7%94%A8%E6%8C%87%E5%8C%97.md)
 
 </div>
 
